@@ -74,9 +74,156 @@
     </div>
 </div>
 
-<script src="scripts/corejs.min.js"></script>
-<script src="scripts/fetch.min.js"></script>
 <script src="scripts/jquery.min.js"></script>
-<script src="scripts/signup.js"></script>
+<script>
+
+    var getCookie = function (name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+
+    var setCookie = function (name, value, options) {
+        options = options || {};
+
+        var expires = options.expires;
+
+        if (typeof expires == "number" && expires) {
+            var d = new Date();
+            d.setTime(d.getTime() + expires * 1000);
+            expires = options.expires = d;
+        }
+        if (expires && expires.toUTCString) {
+            options.expires = expires.toUTCString();
+        }
+
+        value = encodeURIComponent(value);
+
+        var updatedCookie = name + "=" + value;
+
+        for (var propName in options) {
+            updatedCookie += "; " + propName;
+            var propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+            }
+        }
+
+        document.cookie = updatedCookie;
+    };
+
+    var deleteCookie = function () {
+        setCookie(name, "", {expires: -1})
+    };
+
+
+    $('document').ready(function () {
+
+        deleteCookie('csrftoken')
+        deleteCookie('sessionid')
+        deleteCookie('access_token')
+        deleteCookie('refresh_token')
+
+        $('.usernameInput').on('keyup', function (event) {
+            $('.usernameInput').removeClass('inputWithError')
+            $('.usernameInput').parent().find('.input-error-text').remove()
+        })
+
+        $('.emailInput').on('keyup', function (event) {
+            $('.emailInput').removeClass('inputWithError')
+            $('.emailInput').parent().find('.input-error-text').remove()
+        })
+
+        $('.passwordInput').on('keyup', function (event) {
+            $('.passwordInput').removeClass('inputWithError')
+            $('.passwordInput').parent().find('.input-error-text').remove()
+        })
+
+
+        $('.signupButton').click(function (event) {
+
+            var email = $('.emailInput').val()
+            var username = $('.usernameInput').val()
+            var password = $('.passwordInput').val()
+            var code = $('.codeInput').val()
+
+            if (!email) {
+                $('.emailInput').addClass('inputWithError')
+                $('.emailInput').parent().append('<div class="input-error-text">Email is required.</div>')
+            }
+
+            if (!username) {
+                $('.usernameInput').addClass('inputWithError')
+                $('.usernameInput').parent().append('<div class="input-error-text">Username is required.</div>')
+            }
+
+            if (!password) {
+                $('.passwordInput').addClass('inputWithError')
+                $('.passwordInput').parent().append('<div class="input-error-text">Password is required.</div>')
+            }
+
+            if (email && username && password) {
+
+                var body = {
+                    username: username,
+                    password: password,
+                    email: email,
+                }
+
+                if (code) {
+                    body.access_key = code
+                }
+
+                window.fetch('/authorizer/user-register/', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                }).then(function (data) {
+                    return data.json()
+                }).then(function (data) {
+
+                    console.log('data', data);
+
+                    if (data.success === true) {
+                        console.log('login');
+                        setCookie('access_token', data.access_token);
+                        setCookie('refresh_token', data.refresh_token);
+
+                        if (code) {
+
+                            location.href = '/a/#!/profile';
+
+                        } else {
+                            location.href = '/quiz'
+                        }
+                    } else {
+                        $('.passwordInput').addClass('inputWithError')
+                        $('.passwordInput').parent().append('<div class="input-error-text">Something went wrong. Please, try again later.</div>')
+                    }
+                });
+
+            }
+
+
+        })
+
+
+    })
+
+</script>
 </body>
 </html>
