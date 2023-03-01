@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Finmars | Financial Management Revolution System</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+
+    <link rel="stylesheet" href="css/main.css">
+
+</head>
+<body onload="initKeycloak()">
+
+<div class="container position-relative">
+
+    <div class="logo-holder">
+        <img src="img/logo.png" alt="Logo">
+    </div>
+
+
+    <div class="login-container loginContainer active">
+
+        <div class="login-wellcome-back">Logging out</div>
+
+
+    </div>
+</div>
+
+
+<div class="bg-img-container">
+    <img src="img/logo_big.png" alt="">
+</div>
+</div>
+
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/keycloak.js"></script>
+
+<script>
+
+    var getCookie = function (name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+
+    var setCookie = function (name, value, options) {
+        options = options || {};
+
+        var expires = options.expires;
+
+        if (typeof expires == "number" && expires) {
+            var d = new Date();
+            d.setTime(d.getTime() + expires * 1000);
+            expires = options.expires = d;
+        }
+        if (expires && expires.toUTCString) {
+            options.expires = expires.toUTCString();
+        }
+
+        value = encodeURIComponent(value);
+
+        var updatedCookie = name + "=" + value;
+
+        for (var propName in options) {
+            updatedCookie += "; " + propName;
+            var propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+            }
+        }
+
+        document.cookie = updatedCookie;
+    };
+
+    var deleteCookie = function () {
+        setCookie(name, "", {expires: -1})
+    };
+
+    function initKeycloak() {
+
+        fetch('/config.json').then(function (data) {
+            return data.json()
+        }).then(function (data) {
+
+            let url = data.keycloak.url;
+            let realm = data.keycloak.realm;
+
+            const keycloak = new Keycloak({
+                url: url,
+                realm: realm,
+                clientId: 'finmars-portal'
+            });
+
+            keycloak.token = getCookie('access_token')
+            keycloak.refreshToken = getCookie('refresh_token')
+            keycloak.idToken = getCookie('id_token')
+
+            console.log('url,', url)
+            console.log('realm,', realm)
+
+            console.log('keycloak initing')
+
+            keycloak.init({
+                checkLoginIframe: true,
+            }).then(function (authenticated) {
+
+                console.log('authenticated', authenticated);
+
+                keycloak.logout({redirectUri: '/'});
+
+            })
+
+        });
+
+
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset=UTF-8>
+    <title>Finmars | Financial Management Revolution System</title>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+
+
+    <link rel=stylesheet href="css/main.css">
+
+</head>
+<body>
+
+<div id="tsparticles"></div>
+
+<img src="img/sphere.png" alt="" class="finmars-sphere">
+
+<div class="finmars-main-box">
+
+    <a href="/login" class="finmars-main-login">Login</a>
+
+    <div class="finmars-main-copyright"><span class="finmars-main-copyright-text">Copyright ©</span> <span
+            class="finmars-main-copyright-text current-year">2022</span> <a href="https://finmars.com"
+                                                                        class="finmars-site-link">Finmars SCSA</a></div>
+
+</div>
+
+<script src="scripts/jquery.min.js"></script>
+
+
+<script src="scripts/tsparticles.engine.min.js"></script>
+<script src="scripts/tsparticles.move.base.min.js"></script>
+<script src="scripts/tsparticles.shape.circle.min.js"></script>
+<script src="scripts/tsparticles.updater.color.min.js"></script>
+<script src="scripts/tsparticles.updater.opacity.min.js"></script>
+<script src="scripts/tsparticles.updater.out-modes.min.js"></script>
+<script src="scripts/tsparticles.updater.size.min.js"></script>
+<script src="scripts/tsparticles.preset.stars.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.current-year').html(new Date().getFullYear())
+
+    });
+
+
+</script>
+
+<script type="text/javascript">
+    (async () => {
+        await loadStarsPreset(tsParticles);
+
+        await tsParticles.load("tsparticles", {preset: "stars"});
+    })();
+</script>
+
+</body>
+</html>
