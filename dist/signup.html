@@ -36,11 +36,6 @@
             <input type="password" class="material-input passwordInput" placeholder="Choose your Password">
         </div>
 
-        <div class="material-input-container">
-            <input type="text" class="material-input codeInput" placeholder="Code">
-        </div>
-
-
         <div class="signup-error-holder signupErrorHolder">
 
         </div>
@@ -155,7 +150,6 @@
             var email = $('.emailInput').val()
             var username = $('.usernameInput').val()
             var password = $('.passwordInput').val()
-            var code = $('.codeInput').val()
 
             if (!email) {
                 $('.emailInput').addClass('inputWithError')
@@ -178,10 +172,6 @@
                     username: username,
                     password: password,
                     email: email,
-                }
-
-                if (code) {
-                    body.access_key = code
                 }
 
                 window.fetch('/authorizer/user-register/', {
