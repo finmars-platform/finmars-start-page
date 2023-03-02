@@ -193,13 +193,8 @@
                         setCookie('access_token', data.access_token);
                         setCookie('refresh_token', data.refresh_token);
 
-                        if (code) {
+                        location.href = '/v/profile';
 
-                            location.href = '/a/#!/profile';
-
-                        } else {
-                            location.href = '/quiz'
-                        }
                     } else {
                         $('.passwordInput').addClass('inputWithError')
                         $('.passwordInput').parent().append('<div class="input-error-text">Something went wrong. Please, try again later.</div>')
