@@ -92,11 +92,12 @@
 
             let url = data.keycloak.url;
             let realm = data.keycloak.realm;
+            let clientId = data.keycloak.clientId;
 
             const keycloak = new Keycloak({
                 url: url,
                 realm: realm,
-                clientId: 'finmars-portal'
+                clientId: clientId
             });
             keycloak.init({
                 checkLoginIframe: false,
