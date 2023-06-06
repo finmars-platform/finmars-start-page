@@ -83,6 +83,9 @@
         setCookie(name, "", {expires: -1})
     };
 
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
     function initKeycloak() {
 
@@ -99,10 +102,18 @@
                 realm: realm,
                 clientId: clientId
             });
-            keycloak.init({
+
+            const initConfig = {
                 checkLoginIframe: false,
                 onLoad: 'login-required'
-            }).then(function (authenticated) {
+            }
+
+            if (isMobile()) {
+                const baseUrl = window.location.origin;
+                initConfig['redirectUri'] = `${baseUrl}/m/`;
+            }
+
+            keycloak.init(initConfig).then(function (authenticated) {
                 if (authenticated) {
                     setCookie('access_token', keycloak.token);
                     setCookie('refresh_token', keycloak.refreshToken);
