@@ -11,7 +11,7 @@
 
 
 </head>
-<body>
+<body onload="initKeycloak()">
 
 <div class="container position-relative">
 
@@ -19,48 +19,9 @@
         <img src="img/logo.png" alt="Logo">
     </div>
 
+    <div class="login-container loginContainer active">
 
-    <div class="signup-container signupContainer active">
-
-        <div class="signup-create-account">Create Account</div>
-
-        <div class="material-input-container">
-            <input type="text" class="material-input emailInput" placeholder="Your email">
-        </div>
-
-        <div class="material-input-container">
-            <input type="text" class="material-input usernameInput" placeholder="User Name">
-        </div>
-
-        <div class="material-input-container">
-            <input type="password" class="material-input passwordInput" placeholder="Choose your Password">
-        </div>
-
-        <div class="signup-error-holder signupErrorHolder">
-
-        </div>
-
-        <div class="signup-misc-holder">
-
-            <div class="signup-misc-line-1">
-                <input type="checkbox" class="policy-checkbox policyCheckbox"> I Agree with <a href="/terms">Terms & Conditions</a> and
-                <a href="/privacy-policy">Privacy Policy</a>
-            </div>
-
-            <div class="signup-misc-line-2">
-                <input type="checkbox" class="news-checkbox newsCheckbox"> I agree to receive news & updates by email
-
-            </div>
-
-        </div>
-
-        <div class="signup-button-holder">
-            <button class="material-button signup-button signupButton">CREATE ACCOUNT</button>
-        </div>
-
-        <div class="login-line-holder">
-            Already have an account? <a href="/login" class="login-link">Sign In</a>
-        </div>
+        <div class="login-wellcome-back">Sign Up</div>
 
     </div>
 
@@ -69,6 +30,7 @@
     </div>
 </div>
 
+<script src="scripts/keycloak.js"></script>
 <script src="scripts/jquery.min.js"></script>
 <script>
 
@@ -121,93 +83,50 @@
         setCookie(name, "", {expires: -1})
     };
 
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
-    $('document').ready(function () {
+    function initKeycloak() {
 
-        deleteCookie('csrftoken')
-        deleteCookie('sessionid')
-        deleteCookie('access_token')
-        deleteCookie('refresh_token')
+        fetch('/config.json').then(function (data) {
+            return data.json()
+        }).then(function (data) {
 
-        $('.usernameInput').on('keyup', function (event) {
-            $('.usernameInput').removeClass('inputWithError')
-            $('.usernameInput').parent().find('.input-error-text').remove()
-        })
+            let url = data.keycloak.url;
+            let realm = data.keycloak.realm;
+            let clientId = data.keycloak.clientId;
 
-        $('.emailInput').on('keyup', function (event) {
-            $('.emailInput').removeClass('inputWithError')
-            $('.emailInput').parent().find('.input-error-text').remove()
-        })
+            const keycloak = new Keycloak({
+                url: url,
+                realm: realm,
+                clientId: clientId
+            });
 
-        $('.passwordInput').on('keyup', function (event) {
-            $('.passwordInput').removeClass('inputWithError')
-            $('.passwordInput').parent().find('.input-error-text').remove()
-        })
-
-
-        $('.signupButton').click(function (event) {
-
-            var email = $('.emailInput').val()
-            var username = $('.usernameInput').val()
-            var password = $('.passwordInput').val()
-
-            if (!email) {
-                $('.emailInput').addClass('inputWithError')
-                $('.emailInput').parent().append('<div class="input-error-text">Email is required.</div>')
+            const initConfig = {
+                checkLoginIframe: false,
+                onLoad: 'login-required'
             }
 
-            if (!username) {
-                $('.usernameInput').addClass('inputWithError')
-                $('.usernameInput').parent().append('<div class="input-error-text">Username is required.</div>')
+            if (isMobile()) {
+                const baseUrl = window.location.origin;
+                initConfig['redirectUri'] = `${baseUrl}/m/`;
             }
 
-            if (!password) {
-                $('.passwordInput').addClass('inputWithError')
-                $('.passwordInput').parent().append('<div class="input-error-text">Password is required.</div>')
-            }
-
-            if (email && username && password) {
-
-                var body = {
-                    username: username,
-                    password: password,
-                    email: email,
+            keycloak.init(initConfig).then(function (authenticated) {
+                if (!authenticated) {
+                    keycloak.register();
+                } else {
+                    // Optionally redirect already authenticated users
+                    location.href = '/v/profile';
                 }
-
-                window.fetch('/authorizer/user-register/', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                }).then(function (data) {
-                    return data.json()
-                }).then(function (data) {
-
-                    console.log('data', data);
-
-                    if (data.success === true) {
-                        console.log('login');
-                        setCookie('access_token', data.access_token);
-                        setCookie('refresh_token', data.refresh_token);
-
-                        location.href = '/v/profile';
-
-                    } else {
-                        $('.passwordInput').addClass('inputWithError')
-                        $('.passwordInput').parent().append('<div class="input-error-text">Something went wrong. Please, try again later.</div>')
-                    }
-                });
-
-            }
-
+            }).catch(function (error) {
+                console.log('error', error);
+                alert('failed to initialize', error);
+            });
 
         })
-
-
-    })
+    }
 
 </script>
 </body>
