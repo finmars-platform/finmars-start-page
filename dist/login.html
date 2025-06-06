@@ -96,6 +96,7 @@
             let url = data.keycloak.url;
             let realm = data.keycloak.realm;
             let clientId = data.keycloak.clientId;
+            let redirectPath = data.keycloak.redirectPath;
 
             const keycloak = new Keycloak({
                 url: url,
@@ -119,7 +120,7 @@
                     setCookie('refresh_token', keycloak.refreshToken);
                     setCookie('id_token', keycloak.idToken);
                     // location.href = '/a/#/';
-                    location.href = '/v/profile';
+                    location.href = redirectPath;
                 }
             }).catch(function (error) {
                 console.log('error', error);

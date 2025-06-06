@@ -11,6 +11,7 @@ var app = express();
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'https://dev-auth.finmars.com';
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || 'finmars';
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'finmars';
+const REDIRECT_PATH = process.env.REDIRECT_PATH || '/v/profile';
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -26,7 +27,8 @@ app.get('/config.json', function (req, res) {
         'keycloak': {
             'url': KEYCLOAK_URL,
             'realm': KEYCLOAK_REALM,
-            'clientId': KEYCLOAK_CLIENT_ID
+            'clientId': KEYCLOAK_CLIENT_ID,
+            'redirectPath': REDIRECT_PATH,
         }
     })
 
