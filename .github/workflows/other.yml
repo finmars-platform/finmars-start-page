@@ -1,0 +1,27 @@
+name: CI for all commits
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Some linters
+        run: echo "Some linters"
+
+  test:
+    name: Test Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Some linters
+        run: echo "Some tests"
