@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1
+ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
+
 # Using the latest LTS version of Node.js based on Alpine
 FROM node:24-alpine
 
