@@ -3,7 +3,7 @@ ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
 # Using the latest LTS version of Node.js based on Alpine
-FROM node:24-alpine
+FROM node:22-alpine
 
 # Update and install dependencies
 RUN apk update && \
