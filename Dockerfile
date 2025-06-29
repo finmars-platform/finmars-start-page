@@ -1,5 +1,5 @@
 # Using the latest LTS version of Node.js based on Alpine
-FROM node:18-alpine
+FROM node:24-alpine
 
 # Update and install dependencies
 RUN apk update && \
