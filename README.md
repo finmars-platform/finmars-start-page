@@ -14,6 +14,9 @@ npm install
 node server.js
 ```
 
+Static assets are already included in the `dist` directory, so no separate build
+step is required.
+
 The server listens on `PORT` (default `8080`).
 
 ### Environment Variables
