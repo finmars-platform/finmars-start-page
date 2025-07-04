@@ -12,6 +12,7 @@ const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'https://dev-auth.finmars.com';
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || 'finmars';
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'finmars';
 const REDIRECT_PATH = process.env.REDIRECT_PATH || '/v/profile';
+const PORT = process.env.PORT || 8080;
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -50,6 +51,6 @@ app.get('/signup', function (req, res) {
 });
 
 
-app.listen(8080, '0.0.0.0', function () {
-    console.info('Express server start at 8080 port');
+app.listen(PORT, '0.0.0.0', function () {
+    console.info(`Express server start at ${PORT} port`);
 });
